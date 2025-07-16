@@ -46,26 +46,26 @@ export const foldersTable = pgTable(
   "folders",
   {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    projectId: integer()
+    project_id: integer()
       .notNull()
       .references(() => projectsTable.id, { onDelete: "cascade" }),
-    parentFolderId: integer(), // null for root folders
+    parent_folder_id: integer(), // null for root folders
     name: text("name").notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
+    created_at: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
+    updated_at: timestamp("updated_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
   },
   (table) => {
     return {
       uniqueFolder: uniqueIndex("folders_project_parent_name_unique").on(
-        table.projectId,
-        table.parentFolderId,
+        table.project_id,
+        table.parent_folder_id,
         table.name
       ),
-      idxParent: index("folders_parent_idx").on(table.parentFolderId),
+      idxParent: index("folders_parent_idx").on(table.parent_folder_id),
     }
   }
 )
@@ -83,28 +83,28 @@ export const filesTable = pgTable(
   "files",
   {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    projectId: integer()
+    project_id: integer()
       .notNull()
       .references(() => projectsTable.id, { onDelete: "cascade" }),
-    folderId: integer().references(() => foldersTable.id, {
+    folder_id: integer().references(() => foldersTable.id, {
       onDelete: "cascade",
     }),
     name: text("name").notNull(),
     loroSnapshot: bytea(),
-    createdAt: timestamp("created_at", { withTimezone: true })
+    created_at: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
+    updated_at: timestamp("updated_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
   },
   (table) => {
     return {
       uniqueFile: uniqueIndex("files_folder_name_unique").on(
-        table.folderId,
+        table.folder_id,
         table.name
       ),
-      idxFolder: index("files_folder_idx").on(table.folderId),
+      idxFolder: index("files_folder_idx").on(table.folder_id),
     }
   }
 )
@@ -116,11 +116,11 @@ export const projectsRelations = relations(projectsTable, ({ many }) => ({
 
 export const foldersRelations = relations(foldersTable, ({ one, many }) => ({
   project: one(projectsTable, {
-    fields: [foldersTable.projectId],
+    fields: [foldersTable.project_id],
     references: [projectsTable.id],
   }),
   parent: one(foldersTable, {
-    fields: [foldersTable.parentFolderId],
+    fields: [foldersTable.parent_folder_id],
     references: [foldersTable.id],
   }),
   children: many(foldersTable),
@@ -129,11 +129,11 @@ export const foldersRelations = relations(foldersTable, ({ one, many }) => ({
 
 export const filesRelations = relations(filesTable, ({ one }) => ({
   project: one(projectsTable, {
-    fields: [filesTable.projectId],
+    fields: [filesTable.project_id],
     references: [projectsTable.id],
   }),
   folder: one(foldersTable, {
-    fields: [filesTable.folderId],
+    fields: [filesTable.folder_id],
     references: [foldersTable.id],
   }),
 }))
