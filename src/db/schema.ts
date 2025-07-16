@@ -90,7 +90,7 @@ export const filesTable = pgTable(
       onDelete: "cascade",
     }),
     name: text("name").notNull(),
-    loroSnapshot: bytea(),
+    loro_snapshot: bytea(),
     created_at: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
@@ -156,9 +156,48 @@ export const createTodoSchema = createInsertSchema(todosTable)
   .openapi(`CreateTodo`)
 export const updateTodoSchema = createUpdateSchema(todosTable)
 
+// Schemas for folders
+export const selectFolderSchema = createSelectSchema(foldersTable)
+export const createFolderSchema = createInsertSchema(foldersTable)
+  .omit({
+    created_at: true,
+    updated_at: true,
+  })
+  .openapi(`CreateFolder`)
+export const updateFolderSchema = createUpdateSchema(foldersTable)
+
+// Schemas for files (manual definition due to custom bytea type)
+export const selectFileSchema = z.object({
+  id: z.number(),
+  project_id: z.number(),
+  folder_id: z.number().nullable(),
+  name: z.string(),
+  loro_snapshot: z.instanceof(Uint8Array).nullable(),
+  created_at: z.date(),
+  updated_at: z.date(),
+})
+export const createFileSchema = z
+  .object({
+    project_id: z.number(),
+    folder_id: z.number().nullable(),
+    name: z.string(),
+    loro_snapshot: z.instanceof(Uint8Array).nullable().optional(),
+  })
+  .openapi(`CreateFile`)
+export const updateFileSchema = z.object({
+  project_id: z.number().optional(),
+  folder_id: z.number().nullable().optional(),
+  name: z.string().optional(),
+  loro_snapshot: z.instanceof(Uint8Array).nullable().optional(),
+})
+
 export type Project = z.infer<typeof selectProjectSchema>
 export type UpdateProject = z.infer<typeof updateProjectSchema>
 export type Todo = z.infer<typeof selectTodoSchema>
 export type UpdateTodo = z.infer<typeof updateTodoSchema>
+export type Folder = z.infer<typeof selectFolderSchema>
+export type UpdateFolder = z.infer<typeof updateFolderSchema>
+export type File = z.infer<typeof selectFileSchema>
+export type UpdateFile = z.infer<typeof updateFileSchema>
 
 export const selectUsersSchema = createSelectSchema(users)
