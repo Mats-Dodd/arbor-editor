@@ -1,4 +1,4 @@
-import type { AppType } from "./routes/api/todos/$.ts"
+import type { AppType } from "./routes/api/$.ts"
 import { hc } from "hono/client"
 
 let _client: ReturnType<typeof hc<AppType>> | null = null
