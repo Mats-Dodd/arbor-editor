@@ -8,6 +8,7 @@ import {
   usersCollection,
 } from "@/lib/collections"
 import { type Todo } from "@/db/schema"
+import { Button } from "@/components/ui/button"
 
 export const Route = createFileRoute("/_authenticated/project/$projectId")({
   component: ProjectPage,
@@ -135,12 +136,12 @@ function ProjectPage() {
             placeholder="Add a new todo..."
             className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <button
+          <Button
             onClick={addTodo}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            variant="default"
           >
             Add
-          </button>
+          </Button>
         </div>
 
         <ul className="space-y-2">
@@ -164,12 +165,12 @@ function ProjectPage() {
               >
                 {todo.text}
               </span>
-              <button
+              <Button
                 onClick={() => deleteTodo(todo.id)}
-                className="px-2 py-1 text-red-600 hover:bg-red-50 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                variant="destructive"
               >
                 Delete
-              </button>
+              </Button>
             </li>
           ))}
         </ul>

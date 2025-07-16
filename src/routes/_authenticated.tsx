@@ -12,6 +12,7 @@ import {
   count,
 } from "@tanstack/react-db"
 import { projectCollection } from "@/lib/collections"
+import { Button } from "@/components/ui/button"
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthenticatedLayout,
@@ -113,12 +114,12 @@ function AuthenticatedLayout() {
               <span className="text-sm text-gray-700">
                 {session.user.email}
               </span>
-              <button
+              <Button
                 onClick={handleLogout}
-                className="text-sm font-medium text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md hover:bg-gray-100 transition-colors"
+                variant="ghost"
               >
                 Sign out
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -128,9 +129,9 @@ function AuthenticatedLayout() {
           <div className="p-4">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-medium text-gray-900">Projects</h2>
-              <button
+              <Button
                 onClick={() => setShowNewProjectForm(!showNewProjectForm)}
-                className="p-1 text-gray-500 hover:text-gray-700"
+                variant="ghost"
               >
                 <svg
                   className="w-5 h-5"
@@ -145,7 +146,7 @@ function AuthenticatedLayout() {
                     d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                   />
                 </svg>
-              </button>
+              </Button>
             </div>
 
             {showNewProjectForm && (
@@ -159,18 +160,18 @@ function AuthenticatedLayout() {
                   className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                 />
                 <div className="flex gap-2 mt-2">
-                  <button
+                  <Button
                     onClick={handleCreateProject}
-                    className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
+                    variant="default"
                   >
                     Create
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => setShowNewProjectForm(false)}
-                    className="px-3 py-1 bg-gray-300 text-gray-700 rounded text-sm hover:bg-gray-400"
+                    variant="outline"
                   >
                     Cancel
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
@@ -181,7 +182,7 @@ function AuthenticatedLayout() {
                   key={project.id}
                   to="/project/$projectId"
                   params={{ projectId: project.id.toString() }}
-                  className="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+                  className="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md hover:text-gray-900"
                 >
                   {project.name}
                 </Link>
@@ -189,7 +190,7 @@ function AuthenticatedLayout() {
             </nav>
           </div>
         </aside>
-        <main className="flex-1">
+        <main className="flex-1 p-4">
           <Outlet />
         </main>
       </div>
