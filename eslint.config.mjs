@@ -13,6 +13,9 @@ const gitignorePath = fileURLToPath(new URL(".gitignore", import.meta.url))
 export default [
   includeIgnoreFile(gitignorePath, "Imported .gitignore patterns"),
   {
+    ignores: ["src/components/ui/calendar.tsx", "src/lib/createCRUDRoutes.ts"],
+  },
+  {
     files: ["src/**/*.{js,jsx,ts,tsx,mjs}"],
     languageOptions: {
       ecmaVersion: 2022,
