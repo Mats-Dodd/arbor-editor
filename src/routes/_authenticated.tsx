@@ -114,10 +114,7 @@ function AuthenticatedLayout() {
               <span className="text-sm text-gray-700">
                 {session.user.email}
               </span>
-              <Button
-                onClick={handleLogout}
-                variant="ghost"
-              >
+              <Button onClick={handleLogout} variant="ghost">
                 Sign out
               </Button>
             </div>
@@ -160,10 +157,7 @@ function AuthenticatedLayout() {
                   className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                 />
                 <div className="flex gap-2 mt-2">
-                  <Button
-                    onClick={handleCreateProject}
-                    variant="default"
-                  >
+                  <Button onClick={handleCreateProject} variant="default">
                     Create
                   </Button>
                   <Button

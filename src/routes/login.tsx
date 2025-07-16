@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { createFileRoute } from "@tanstack/react-router"
 import { authClient } from "@/lib/auth-client"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
@@ -13,7 +13,6 @@ function Layout() {
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
-  const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -127,11 +126,7 @@ function Layout() {
           )}
 
           <div>
-            <Button
-              type="submit"
-              disabled={isLoading}
-              variant="default"
-            >
+            <Button type="submit" disabled={isLoading} variant="default">
               {isLoading ? "Signing in..." : "Sign in"}
             </Button>
           </div>

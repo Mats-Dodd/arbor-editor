@@ -136,10 +136,7 @@ function ProjectPage() {
             placeholder="Add a new todo..."
             className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <Button
-            onClick={addTodo}
-            variant="default"
-          >
+          <Button onClick={addTodo} variant="default">
             Add
           </Button>
         </div>
@@ -165,10 +162,7 @@ function ProjectPage() {
               >
                 {todo.text}
               </span>
-              <Button
-                onClick={() => deleteTodo(todo.id)}
-                variant="destructive"
-              >
+              <Button onClick={() => deleteTodo(todo.id)} variant="destructive">
                 Delete
               </Button>
             </li>
