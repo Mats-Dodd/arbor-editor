@@ -38,7 +38,7 @@ This command will also report linter errors that were not automatically fixable.
 
 - **TypeScript**: Strict mode, ES2022 target, bundler module resolution
 - **Imports**: Use `@/*` path aliases for `src/` directory imports
-- **Components**: React 19 with JSX transform, functional components preferred
+- **Components**: Shadcn
 - **Server DB**: Drizzle ORM with PostgreSQL dialect, schema-first approach
 - **Client DB**: TanStack DB with Electric Sync Collections
 - **Routing**: File-based with TanStack Router, use `Link` component for navigation
