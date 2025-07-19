@@ -5,6 +5,8 @@ import {
   selectTodoSchema,
   selectProjectSchema,
   selectUsersSchema,
+  selectFolderSchema,
+  selectFileSchema,
 } from "@/db/schema"
 import { getClient } from "@/api-client"
 const client = getClient()
@@ -186,6 +188,187 @@ export const todoCollection = createCollection(
       const { original: deletedTodo } = transaction.mutations[0]
       const result = await client.api.todos[":id"].$delete({
         param: { id: deletedTodo.id },
+      })
+
+      if (result.ok) {
+        const data = await result.json()
+        return { txid: data.txid }
+      } else {
+        const errorData = await result.json()
+        throw new Error(JSON.stringify(errorData))
+      }
+    },
+  })
+)
+
+export const foldersCollection = createCollection(
+  electricCollectionOptions({
+    id: "folders",
+    shapeOptions: {
+      url: new URL(
+        `/api/folders`,
+        typeof window !== `undefined`
+          ? window.location.origin
+          : `http://localhost:5173`
+      ).toString(),
+      params: {
+        table: "folders",
+        user_id: async () =>
+          authClient
+            .getSession()
+            .then((session) => session.data?.user.id ?? ``),
+      },
+      parser: {
+        timestamptz: (date: string) => {
+          return new Date(date)
+        },
+      },
+    },
+    schema: selectFolderSchema,
+    getKey: (item) => item.id,
+    onInsert: async ({ transaction }) => {
+      const { modified: newFolder } = transaction.mutations[0]
+      const result = await client.api.folders.$post({
+        json: {
+          project_id: newFolder.project_id,
+          parent_folder_id: newFolder.parent_folder_id,
+          name: newFolder.name,
+        },
+      })
+
+      if (result.ok) {
+        const data = await result.json()
+        return { txid: data.txid }
+      } else {
+        const errorData = await result.json()
+        throw new Error(JSON.stringify(errorData))
+      }
+    },
+    onUpdate: async ({ transaction }) => {
+      const { modified: updatedFolder } = transaction.mutations[0]
+      const result = await client.api.folders[":id"].$put({
+        param: {
+          id: updatedFolder.id.toString(),
+        },
+        json: {
+          project_id: updatedFolder.project_id,
+          parent_folder_id: updatedFolder.parent_folder_id,
+          name: updatedFolder.name,
+        },
+      })
+      if (result.ok) {
+        const data = await result.json()
+        return { txid: data.txid }
+      } else {
+        const errorData = await result.json()
+        throw new Error(JSON.stringify(errorData))
+      }
+    },
+    onDelete: async ({ transaction }) => {
+      const { original: deletedFolder } = transaction.mutations[0]
+      const result = await client.api.folders[":id"].$delete({
+        param: { id: deletedFolder.id.toString() },
+      })
+
+      if (result.ok) {
+        const data = await result.json()
+        return { txid: data.txid }
+      } else {
+        const errorData = await result.json()
+        throw new Error(JSON.stringify(errorData))
+      }
+    },
+  })
+)
+
+// Helper functions for bytea handling
+const serializeBytea = (data: Uint8Array | null): string | null => {
+  if (!data) return null
+  // Convert Uint8Array to base64 for JSON transport
+  return btoa(String.fromCharCode(...data))
+}
+
+const deserializeBytea = (data: string | null): Uint8Array | null => {
+  if (!data) return null
+  // Convert base64 back to Uint8Array
+  const binaryString = atob(data)
+  return new Uint8Array(binaryString.length).map((_, i) =>
+    binaryString.charCodeAt(i)
+  )
+}
+
+export const filesCollection = createCollection(
+  electricCollectionOptions({
+    id: "files",
+    shapeOptions: {
+      url: new URL(
+        `/api/files`,
+        typeof window !== `undefined`
+          ? window.location.origin
+          : `http://localhost:5173`
+      ).toString(),
+      params: {
+        table: "files",
+        user_id: async () =>
+          authClient
+            .getSession()
+            .then((session) => session.data?.user.id ?? ``),
+      },
+      parser: {
+        timestamptz: (date: string) => {
+          return new Date(date)
+        },
+        // Handle bytea field parsing from Electric
+        loro_snapshot: (data: string | null) => deserializeBytea(data),
+      },
+    },
+    schema: selectFileSchema,
+    getKey: (item) => item.id,
+    onInsert: async ({ transaction }) => {
+      const { modified: newFile } = transaction.mutations[0]
+      const result = await client.api.files.$post({
+        json: {
+          project_id: newFile.project_id,
+          folder_id: newFile.folder_id,
+          name: newFile.name,
+          // Handle bytea serialization for API transport
+          loro_snapshot: serializeBytea(newFile.loro_snapshot),
+        },
+      })
+
+      if (result.ok) {
+        const data = await result.json()
+        return { txid: data.txid }
+      } else {
+        const errorData = await result.json()
+        throw new Error(JSON.stringify(errorData))
+      }
+    },
+    onUpdate: async ({ transaction }) => {
+      const { modified: updatedFile } = transaction.mutations[0]
+      const result = await client.api.files[":id"].$put({
+        param: {
+          id: updatedFile.id.toString(),
+        },
+        json: {
+          project_id: updatedFile.project_id,
+          folder_id: updatedFile.folder_id,
+          name: updatedFile.name,
+          loro_snapshot: serializeBytea(updatedFile.loro_snapshot),
+        },
+      })
+      if (result.ok) {
+        const data = await result.json()
+        return { txid: data.txid }
+      } else {
+        const errorData = await result.json()
+        throw new Error(JSON.stringify(errorData))
+      }
+    },
+    onDelete: async ({ transaction }) => {
+      const { original: deletedFile } = transaction.mutations[0]
+      const result = await client.api.files[":id"].$delete({
+        param: { id: deletedFile.id.toString() },
       })
 
       if (result.ok) {

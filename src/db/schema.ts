@@ -176,19 +176,22 @@ export const selectFileSchema = z.object({
   created_at: z.date(),
   updated_at: z.date(),
 })
+
+// API schemas use base64 strings for bytea transport
 export const createFileSchema = z
   .object({
     project_id: z.number(),
     folder_id: z.number().nullable(),
     name: z.string(),
-    loro_snapshot: z.instanceof(Uint8Array).nullable().optional(),
+    loro_snapshot: z.string().nullable().optional(), // base64 string for API transport
   })
   .openapi(`CreateFile`)
+
 export const updateFileSchema = z.object({
   project_id: z.number().optional(),
   folder_id: z.number().nullable().optional(),
   name: z.string().optional(),
-  loro_snapshot: z.instanceof(Uint8Array).nullable().optional(),
+  loro_snapshot: z.string().nullable().optional(), // base64 string for API transport
 })
 
 export type Project = z.infer<typeof selectProjectSchema>
