@@ -63,8 +63,24 @@ export function FileManager({ projectId }: FileManagerProps) {
     return new TextEncoder().encode(content)
   }
 
-  const deserializeContent = (data: Uint8Array | null): string => {
+  const deserializeContent = (data: Uint8Array | string | null): string => {
     if (!data) return ""
+
+    // Handle case where data is still a base64 string
+    if (typeof data === "string") {
+      try {
+        const binaryString = atob(data)
+        const uint8Array = new Uint8Array(binaryString.length).map((_, i) =>
+          binaryString.charCodeAt(i)
+        )
+        return new TextDecoder().decode(uint8Array)
+      } catch (_error) {
+        // If it's not base64, treat it as regular string
+        return data
+      }
+    }
+
+    // Handle case where data is already a Uint8Array
     return new TextDecoder().decode(data)
   }
 
