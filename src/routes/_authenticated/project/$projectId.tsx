@@ -6,9 +6,13 @@ import {
   todoCollection,
   projectCollection,
   usersCollection,
+  foldersCollection,
+  filesCollection,
 } from "@/lib/collections"
 import { type Todo } from "@/db/schema"
 import { Button } from "@/components/ui/button"
+import { FolderManager } from "@/components/folder-manager"
+import { FileManager } from "@/components/file-manager"
 
 export const Route = createFileRoute("/_authenticated/project/$projectId")({
   component: ProjectPage,
@@ -16,6 +20,8 @@ export const Route = createFileRoute("/_authenticated/project/$projectId")({
   loader: async () => {
     await projectCollection.preload()
     await todoCollection.preload()
+    await foldersCollection.preload()
+    await filesCollection.preload()
     return null
   },
 })
@@ -174,6 +180,14 @@ function ProjectPage() {
             <p className="text-gray-500">No todos yet. Add one above!</p>
           </div>
         )}
+
+        <hr className="my-8 border-gray-200" />
+
+        {/* Folders and Files Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <FolderManager projectId={parseInt(projectId)} />
+          <FileManager projectId={parseInt(projectId)} />
+        </div>
 
         <hr className="my-8 border-gray-200" />
 
