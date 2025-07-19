@@ -35,7 +35,7 @@ export function FileManager({ projectId }: FileManagerProps) {
         .where(({ filesCollection }) =>
           eq(filesCollection.project_id, projectId)
         )
-        .orderBy(({ filesCollection }) => [filesCollection.name]),
+        .orderBy(({ filesCollection }) => filesCollection.name),
     [projectId]
   )
 
@@ -46,7 +46,7 @@ export function FileManager({ projectId }: FileManagerProps) {
         .where(({ foldersCollection }) =>
           eq(foldersCollection.project_id, projectId)
         )
-        .orderBy(({ foldersCollection }) => [foldersCollection.name]),
+        .orderBy(({ foldersCollection }) => foldersCollection.name),
     [projectId]
   )
 

@@ -119,7 +119,7 @@ export function FolderManager({ projectId }: FolderManagerProps) {
         .where(({ foldersCollection }) =>
           eq(foldersCollection.project_id, projectId)
         )
-        .orderBy(({ foldersCollection }) => [foldersCollection.name]),
+        .orderBy(({ foldersCollection }) => foldersCollection.name),
     [projectId]
   )
 
