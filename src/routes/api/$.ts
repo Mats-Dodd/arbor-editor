@@ -10,9 +10,17 @@ import {
   selectProjectSchema,
   createProjectSchema,
   updateProjectSchema,
+  foldersTable,
+  selectFolderSchema,
+  createFolderSchema,
+  updateFolderSchema,
+  filesTable,
+  selectFileSchema,
+  createFileSchema,
+  updateFileSchema,
 } from "@/db/schema"
 import { users } from "@/db/auth-schema"
-import { eq } from "drizzle-orm"
+import { eq, sql } from "drizzle-orm"
 
 const routes = [
   createCRUDRoutes({
@@ -36,6 +44,50 @@ const routes = [
       update: (session, _id, _data) =>
         eq(projectsTable.owner_id, session.user.id),
       delete: (session, _id) => eq(projectsTable.owner_id, session.user.id),
+    },
+  }),
+  createCRUDRoutes({
+    table: foldersTable,
+    schema: {
+      select: selectFolderSchema,
+      create: createFolderSchema,
+      update: updateFolderSchema,
+    },
+    basePath: "/api/folders",
+    syncFilter: (session) =>
+      `project_id IN (SELECT id FROM projects WHERE owner_id = '${session.user.id}' OR '${session.user.id}' = ANY(shared_user_ids))`,
+    access: {
+      create: (_session, _data) => true,
+      update: (session, _id, _data) => {
+        // Filter by projects user has access to
+        return sql`project_id IN (SELECT id FROM projects WHERE owner_id = '${session.user.id}' OR '${session.user.id}' = ANY(shared_user_ids))`
+      },
+      delete: (session, _id) => {
+        // Filter by projects user has access to
+        return sql`project_id IN (SELECT id FROM projects WHERE owner_id = '${session.user.id}' OR '${session.user.id}' = ANY(shared_user_ids))`
+      },
+    },
+  }),
+  createCRUDRoutes({
+    table: filesTable,
+    schema: {
+      select: selectFileSchema,
+      create: createFileSchema,
+      update: updateFileSchema,
+    },
+    basePath: "/api/files",
+    syncFilter: (session) =>
+      `project_id IN (SELECT id FROM projects WHERE owner_id = '${session.user.id}' OR '${session.user.id}' = ANY(shared_user_ids))`,
+    access: {
+      create: (_session, _data) => true,
+      update: (session, _id, _data) => {
+        // Filter by projects user has access to
+        return sql`project_id IN (SELECT id FROM projects WHERE owner_id = '${session.user.id}' OR '${session.user.id}' = ANY(shared_user_ids))`
+      },
+      delete: (session, _id) => {
+        // Filter by projects user has access to
+        return sql`project_id IN (SELECT id FROM projects WHERE owner_id = '${session.user.id}' OR '${session.user.id}' = ANY(shared_user_ids))`
+      },
     },
   }),
   createCRUDRoutes({
